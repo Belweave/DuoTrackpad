@@ -97,7 +97,7 @@ final class TransportTests: XCTestCase {
             channel.onReady = { name in
                 XCTAssertEqual(name, "Test Mac")
                 channel.send(.init(.dragStart))
-                for _ in 0..<100 { channel.send(.init(.move, x: 1.25, y: -0.5)) }
+                for _ in 0..<100 { channel.send(.init(.move, x: 1.25, y: -0.5, timestamp: 1234)) }
                 channel.send(.init(.dragEnd)); channel.send(.init(.leftClick)); channel.send(.init(.rightClick))
                 channel.send(.init(.scroll, y: -6.5)); channel.send(.init(.stop))
             }

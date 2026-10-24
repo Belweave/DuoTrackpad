@@ -26,7 +26,7 @@ Both peers first send an encrypted `ready` packet. Deliver input only after decr
 | 1 | 1 | Kind |
 | 2 | 8 | X, IEEE-754 Float64 bit pattern in big-endian order |
 | 10 | 8 | Y, same format |
-| 18 | 8 | Sender monotonic timestamp in seconds, same format |
+| 18 | 8 | Elapsed connection interval for heartbeat; zero otherwise |
 
 All numbers must be finite. Absolute X/Y values must not exceed 8192. Relative movement uses host logical pointer coordinates: positive X moves right, positive Y down. Scroll values are signed pixel deltas; the client applies its natural-scrolling preference. The timestamp is used only to echo ping/pong, never to compare clocks across devices.
 
@@ -38,8 +38,8 @@ All numbers must be finite. Absolute X/Y values must not exceed 8192. Relative m
 | 4 | Right-click |
 | 5 | Left button down; following moves drag |
 | 6 | Left button up |
-| 7 | Ping with sender's monotonic timestamp |
-| 8 | Pong echoing that timestamp |
+| 7 | Ping with elapsed connection interval |
+| 8 | Pong echoing that interval |
 | 9 | Ready; only valid as first encrypted message |
 | 10 | Stop/release held buttons |
 | 11 | Host status: X = 1 means mouse-control permission available, X = 0 means waiting |
@@ -48,7 +48,7 @@ Send a ping every second and disconnect after five seconds without authenticated
 
 ## Added input kinds
 
-The binary input version byte remains 1; handshake version is 2. Appended kinds: 12 scrollBegin; 13 scrollEnd (X/Y are release velocity in pixels/second after client scroll preference); 14 action (X is integer MacAction ID, Y zero); 15 zoom (X log scale delta); 16 rotate (X degrees). Scroll boundaries are coalescing barriers. Gesture command mappings are defined by `Shared/MacAction.swift`; no raw arbitrary keyboard or shell command is accepted. Pointer timestamps now also carry the local touch sampling time for pointer acceleration; never compare them across devices.
+The binary input version byte remains 1; handshake version is 2. Appended kinds: 12 scrollBegin; 13 scrollEnd (X/Y are release velocity in pixels/second after client scroll preference); 14 action (X is integer MacAction ID, Y zero); 15 zoom (X log scale delta); 16 rotate (X degrees). Scroll boundaries are coalescing barriers. Gesture command mappings are defined by `Shared/MacAction.swift`; no raw arbitrary keyboard or shell command is accepted. Local pointer acceleration uses touch timestamps on the sender before the transport zeros them; never compare timestamps across devices.
 
 ## Timestamp privacy
 

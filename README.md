@@ -74,7 +74,7 @@ Apple references: [Designing for iPhone Duo](https://developer.apple.com/design/
 - `Tests/`: framing/crypto validation and real localhost socket integration tests.
 - `scripts/`: reproducible Xcode project and app icon generation; local build helper.
 
-A Windows/Linux receiver can reuse the documented [wire protocol](docs/PROTOCOL.md) and implement its own mouse-event sink. Those platforms are extension points, not working receivers yet. The iOS app sends relative motion, scroll, and button operations rather than macOS-specific commands.
+A Windows/Linux receiver can reuse the documented [wire protocol](docs/PROTOCOL.md) and implement its own event sink. Those platforms are extension points, not working receivers yet. Input combines relative motion, scrolling, and buttons with MacAction IDs and zoom/rotation commands. Another host must map those commands to its own controls or explicitly report unsupported actions.
 
 ## Pairing
 

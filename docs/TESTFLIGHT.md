@@ -1,8 +1,8 @@
 # TestFlight releases
 
-Duo Trackpad's iOS bundle identifier is `app.duotrackpad.ios`. The macOS receiver is a separate app (`app.duotrackpad.receiver`) distributed locally; its Accessibility event injection is not packaged as an iOS TestFlight companion.
+Duo Trackpad's iOS bundle identifier is `app.duotrackpad.ios`. The Mac receiver is a separate [DMG download](RELEASING.md), with bundle identifier `app.duotrackpad.receiver`. Install and run it on the Mac before using the phone beta.
 
-Use the requested Xcode 27.1 RC (27A9275), a paid Apple Developer team, and an App Store Connect app record matching the iOS bundle identifier. The generated project uses the sole installed development identity's team, or `DUO_DEVELOPMENT_TEAM`. Version 1.0, build 1 is the first candidate. Check App Store Connect and increment `CURRENT_PROJECT_VERSION` for every later upload; preserve that value in `scripts/generate-project.py` when regenerating the project.
+Use Xcode 27.1 (27A9275), a paid Apple Developer team, and the matching App Store Connect app record. The generated project uses the sole installed development identity's team, or `DUO_DEVELOPMENT_TEAM`. The first iPhone beta is 1.0 (1); the receiver starts independently at 0.1.0 (1). Check App Store Connect before uploading again. Increase the iOS build number in `scripts/generate-project.py` for later uploads.
 
 ```sh
 python3 scripts/generate-project.py

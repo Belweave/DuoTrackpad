@@ -16,7 +16,7 @@ Both keys must be 32 bytes; names are bounded to 128 UTF-8 bytes. For initial pa
 
 Subsequent frames are CryptoKit ChaChaPoly combined boxes: a random 12-byte nonce, ciphertext, and a 16-byte authentication tag. Plaintext is 34 bytes: an unsigned 64-bit big-endian sequence counter followed by the 26-byte input packet below. Each direction starts its counter at zero and increments per message. Require the exact expected sequence number.
 
-Both peers first send an encrypted `ready` packet. Deliver input only after decrypting the peer's ready. A missing handshake times out after 15 seconds. Persist private identity keys and verified peer public keys in device-only Keychain storage. Do not persist ephemeral keys or codes. See README for the short-code handshake's active-attack limitation and the production pairing replacement needed.
+Both peers first send an encrypted `ready` packet. Deliver input only after decrypting the peer's ready. A missing handshake times out after 15 seconds. Persist private identity keys and verified peer public keys in device-only Keychain storage. Do not persist ephemeral keys or codes. See [security and privacy](../SECURITY.md) for the short-code handshake's active-attack limitation and the production pairing replacement needed.
 
 ## Input packet
 

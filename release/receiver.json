@@ -1,0 +1,9 @@
+{
+  "name": "Duo Receiver",
+  "version": "0.1.0",
+  "build": 1,
+  "bundleId": "app.duotrackpad.receiver",
+  "minimumMacOS": "14.0",
+  "architecture": "arm64",
+  "teamId": "6D56G8D849"
+}

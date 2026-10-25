@@ -1,4 +1,8 @@
-# Verification — 2026-10-24
+# Verification
+
+This page keeps dated engineering evidence. Early sections describe older builds; the later revision supersedes them. Historical screenshots are not proof of current gesture behavior. See [receiver releases](RELEASING.md) for current distribution requirements.
+
+## Initial development checks — 2026-10-24
 
 Toolchain checked before building: `/Applications/Xcode.app/Contents/Developer`, Xcode **27.1**, build **27A9275**. iOS Simulator SDK **27.1**, macOS SDK **27.0**. Local, sequential app builds used two jobs and `build/DerivedData`; no RAM-backed build storage.
 

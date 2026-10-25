@@ -26,6 +26,11 @@ def development_team():
         return None
 
 root = Path(__file__).resolve().parent.parent
+receiver = json.loads((root/'release/receiver.json').read_text())
+if not re.fullmatch(r'0|[1-9][0-9]*', str(receiver['build'])) or int(receiver['build']) < 1:
+    raise SystemExit('Receiver build must be a positive integer.')
+if not re.fullmatch(r'(0|[1-9][0-9]*)\.(0|[1-9][0-9]*)\.(0|[1-9][0-9]*)', receiver['version']):
+    raise SystemExit('Receiver version must use MAJOR.MINOR.PATCH.')
 objects = {}
 def uid(name): return hashlib.sha1(name.encode()).hexdigest()[:24].upper()
 def add(name, value):
@@ -39,6 +44,8 @@ def configs(name, settings):
         values['SWIFT_OPTIMIZATION_LEVEL'] = '-Onone' if mode == 'Debug' else '-O'
         values['DEBUG_INFORMATION_FORMAT'] = 'dwarf' if mode == 'Debug' else 'dwarf-with-dsym'
         if mode == 'Debug': values['SWIFT_ACTIVE_COMPILATION_CONDITIONS'] = 'DEBUG'
+        if mode == 'Release' and values.get('SDKROOT') == 'macosx':
+            values['CODE_SIGN_INJECT_BASE_ENTITLEMENTS'] = 'NO'
         ids.append(config(f'{name}-{mode}', values))
     return add(name+'-configs', {'isa': 'XCConfigurationList', 'buildConfigurations': ids, 'defaultConfigurationIsVisible': 0, 'defaultConfigurationName': 'Release'})
 
@@ -71,7 +78,7 @@ for platform, name, bundle in [('iOS', 'DuoTrackpad', 'app.duotrackpad.ios'), ('
     settings = {'PRODUCT_NAME': name, 'PRODUCT_BUNDLE_IDENTIFIER': bundle, 'SWIFT_VERSION': '5.0', 'GENERATE_INFOPLIST_FILE': 'YES', 'INFOPLIST_FILE': platform+'/Info.plist', 'CURRENT_PROJECT_VERSION': '1', 'MARKETING_VERSION': '1.0', 'CODE_SIGN_STYLE': 'Automatic', 'ENABLE_USER_SCRIPT_SANDBOXING': 'YES', 'SWIFT_STRICT_CONCURRENCY': 'targeted'}
     settings['ASSETCATALOG_COMPILER_APPICON_NAME'] = 'AppIcon'
     if platform == 'iOS': settings.update({'SDKROOT': 'iphoneos', 'IPHONEOS_DEPLOYMENT_TARGET': '27.1', 'TARGETED_DEVICE_FAMILY': '1,2', 'SUPPORTED_PLATFORMS': 'iphoneos iphonesimulator', 'SUPPORTS_MACCATALYST': 'NO'})
-    else: settings.update({'SDKROOT': 'macosx', 'MACOSX_DEPLOYMENT_TARGET': '14.0', 'ARCHS': 'arm64', 'ENABLE_APP_SANDBOX': 'NO', 'ENABLE_HARDENED_RUNTIME': 'YES', 'COMBINE_HIDPI_IMAGES': 'YES', 'CODE_SIGN_STYLE': 'Manual', 'CODE_SIGN_IDENTITY': 'Apple Development'})
+    else: settings.update({'SDKROOT': 'macosx', 'MACOSX_DEPLOYMENT_TARGET': receiver['minimumMacOS'], 'ARCHS': receiver['architecture'], 'ENABLE_APP_SANDBOX': 'NO', 'ENABLE_HARDENED_RUNTIME': 'YES', 'COMBINE_HIDPI_IMAGES': 'YES', 'CODE_SIGN_STYLE': 'Manual', 'CODE_SIGN_IDENTITY': 'Apple Development', 'MARKETING_VERSION': receiver['version'], 'CURRENT_PROJECT_VERSION': str(receiver['build']), 'PRODUCT_BUNDLE_IDENTIFIER': receiver['bundleId']})
     if mac_team:
         settings['DEVELOPMENT_TEAM'] = mac_team
     targets.append(add(name+'-target', {'isa': 'PBXNativeTarget', 'buildConfigurationList': configs(name, settings), 'buildPhases': [source, frameworks, resources], 'buildRules': [], 'dependencies': [], 'name': name, 'productName': name, 'productReference': product, 'productType': 'com.apple.product-type.application'}))
